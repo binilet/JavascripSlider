@@ -20,12 +20,21 @@ const data = [
       ],
     },
     {
-      id: 1,
+      id: 3,
       question: "A group of which animals is referred to as a wake?",
       answers: [
         { answer: "bats", isCorrect: false },
         { answer: "vultures", isCorrect: true },
         { answer: "ants", isCorrect: false },
+      ],
+    },
+    {
+      id: 4,
+      question: "What is Currency Pegging?",
+      answers: [
+        { answer: "policy of devaluing currency", isCorrect: false },
+        { answer: "policy in which national governments set fixed exchange rate.", isCorrect: true },
+        { answer: "act of hidding currency until it gets stronger.", isCorrect: false },
       ],
     },
   ];
@@ -37,6 +46,10 @@ const data = [
   const submit = document.querySelector('.submit')
   const play = document.querySelector('.play')
 
+  const correct_answer = document.querySelector('.correct')
+  const wrong_answer = document.querySelector('.wrong')
+  const score = document.querySelector('.score')
+
   const answer = document.querySelector('.answer')
 
   let qIndex = 0;
@@ -46,7 +59,7 @@ const data = [
   let selectedAnswer;
 
   const showQuestion = () => {
-   
+    selectedAnswer = null;
     let currentQ = data[qIndex];
     question.innerHTML = currentQ.question;
     currentQ.answers.forEach((choice,idx)=>{
@@ -65,6 +78,7 @@ const data = [
         label.htmlFor = 'answer'+idx;
         label.innerHTML = choice.answer;
         div.appendChild(label);
+
     });
 
     selectAnswer();
@@ -79,19 +93,45 @@ const data = [
   }
 
   submit.addEventListener('click',()=>{
-    let element = document.getElementById('answers');
-    while(element.firstChild){
-        element.removeChild(element.firstChild);
+    if(selectedAnswer !== null){
+      let element = document.getElementById('answers');
+      while(element.firstChild){
+          element.removeChild(element.firstChild);
+      }
+      submitQuestion();
+    }else{
+      alert('Please select  an answer!')
     }
     
-    submitQuestion();
   });
 
   const submitQuestion = ()=> {
-    selectedAnswer ? correctCount++ : wrongCount++;
-    qIndex++;
-    showQuestion();
+    if(qIndex == data.length-1){
+      selectedAnswer === 'true' ? correctCount++ : wrongCount++;
+
+      resultScreen.style.display='flex';
+      gameScreen.style.display='none';
+
+      wrong_answer.innerHTML = `Wrong Answers: ${wrongCount}`;
+      correct_answer.innerHTML = `Correct Answers: ${correctCount}`;
+      score.innerHTML = `Score:${correctCount *10}`; 
+    }else{
+      selectedAnswer === 'true' ? correctCount++ : wrongCount++;
+      qIndex++;
+      showQuestion();
+    }  
   }
 
-  showQuestion();
+  if(qIndex != data.length)
+    showQuestion();
+
+play.addEventListener('click',()=>{
+    resultScreen.style.display='none';
+    gameScreen.style.display='flex';
+    qIndex = 0;
+    correctCount = 0;
+    wrongCount = 0;
+    total = 0;
+    showQuestion();
+  });
 
